@@ -3,15 +3,52 @@
 #include "RF24.h"
 #include "printf.h"
 
+// Pinout  nRF24L01:
+// 1  GND
+// 2  3V3
+// 3  CE
+// 4  CSN
+// 5  SCK
+// 6  MOSI
+// 7  MISO
+// 8  IRQ
+
+
+// Pinout Arduino Nano
+//  9 CE
+// 10 CSN
+// 11 MOSI
+// 12 MISO
+// 13 SCK
+
+
+enum commands {
+  AreYouThere    = 0xAA,
+  Stop           = 0x01,
+  Start          = 0x02,
+  NewPeriod      = 0x11,
+  RadioInfo      = 0x21,
+  StopSending    = 0x81
+};
+
+
 // Function prototypes
 void check_radio(void);
 
-// Hardware configuration
+// Hardware pin (Arduino) configuration
+// Radio nRF24
 RF24 radio(9, 10); // Set up nRF24L01 radio on Arduino SPI bus plus Arduino pins 9(CE) & 10 (CSN)
                    // MOSI on Arduino Pin 11 MISO on Arduino pin 12 SCL on Arduino Pin 13
 const byte rf24_interruptPin = 2;// IRQ #0 on Arduino Nano
-const byte startButtonPin    = 3;
-const byte stopButtonPin     = 4;
+
+// Push Buttons
+const byte stopButtonPin    = 3;
+const byte startButtonPin   = 4;
+const byte start14ButtonPin = 5;
+
+/////////////////////////////////////////////////////////////////////
+// Arduino Pins 2, 3, 4, 5, 9, 10, 11, 12, 13 Are already occupied //
+/////////////////////////////////////////////////////////////////////
 
 byte buttonStatus = 0;
 
@@ -25,15 +62,16 @@ unsigned long transmissionTime;
 unsigned long receiveTime;
 
 /********************** Setup *********************/
-8void 
+void 
 setup() {
     Serial.begin(115200);
     printf_begin();
 
-    pinMode(startButtonPin, INPUT_PULLUP);
-    pinMode(stopButtonPin,  INPUT_PULLUP);
+    pinMode(stopButtonPin,    INPUT_PULLUP);
+    pinMode(startButtonPin,   INPUT_PULLUP);
+    pinMode(start14ButtonPin, INPUT_PULLUP);
     
-    Serial.print(F("\n\rRF24/examples/pingpair_irq\n\rSENDER: "));
+    Serial.println(F("/home/gabriele/qtprojects/Arduino/StopWatchSender"));
 
     // Setup and configure rf radio
     radio.begin();  
@@ -58,15 +96,13 @@ setup() {
 /********************** Main Loop *********************/
 void 
 loop() {
-    buttonStatus = (digitalRead(startButtonPin) << 1) | digitalRead(stopButtonPin);
+    buttonStatus = (digitalRead(start14ButtonPin) << 2) | 
+                   (digitalRead(startButtonPin)   << 1) | 
+                    digitalRead(stopButtonPin);
     if(buttonStatus) {
-        if(buttonStatus < 0x03) {
+        if(buttonStatus < 0x07) {
             transmissionTime = millis();
             radio.startWrite(&buttonStatus, sizeof(buttonStatus), 0);
-            if(buttonStatus & 0x02)
-                Serial.print("Start ");
-            if(buttonStatus & 0x01)
-                Serial.print("Stop  ");
         }
         else {
           Serial.print("Error ");
@@ -74,7 +110,9 @@ loop() {
         }
         delay(50);
         while(buttonStatus) {
-            buttonStatus = (digitalRead(startButtonPin) << 1) | digitalRead(stopButtonPin); 
+          buttonStatus = (digitalRead(start14ButtonPin) << 2) | 
+                         (digitalRead(startButtonPin)   << 1) | 
+                          digitalRead(stopButtonPin);
         }
         delay(50);
     }
