@@ -21,14 +21,47 @@
 // 12 MISO
 // 13 SCK
 
+/*
+ * You can have multiple units receive the same broadcast (or multicast) message, 
+ * if they are each configured to use the same receive address that the 
+ * transmitters is sending to.
+ * 
+ * Remember that each can have up to 6 configured receive addresses, 
+ * so one of the ways to use the device is to configure one receive address 
+ * which is unique to a given device, and one receive address which is shared 
+ * with other devices (eg: all receivers, so some subset of them). 
+ * The transmitter can send to a single receiver by using its unique address, 
+ * or to all of the receivers in the group by using the shared address. 
+ * ("Multicast" may be a somewhat better description in that it goes to multiple 
+ * receivers in this scenario, but it need not go to all receivers you can control 
+ * the subset of receivers using a given shared address).
+ * 
+ * If you are sending a multicast message, it must not use ACK 
+ * because multiple receivers would try to send their ACK packets 
+ * at about the same time, which would collide. 
+ * (Also: since the hardware defined packet structure does not 
+ * have a "source" address, the way that Enhanced ShockBurst ACK works 
+ * is that the receiver sends the ACK packet to its own address, 
+ * and the transmitter must be configured to receive at the address 
+ * it's sending to. 
+ * Thus in multicast, a given receiver's address 
+ * to which it will send an ACK is also the shared receive address for 
+ * the other receivers). 
+ * So ACK must be off for multicast (as your code says).
+ */
 
 enum commands {
-  AreYouThere    = 0xAA,
-  Stop           = 0x01,
-  Start          = 0x02,
-  NewPeriod      = 0x11,
-  RadioInfo      = 0x21,
-  StopSending    = 0x81
+    AreYouThere    = 0xAA,
+    Stop           = 0x01,
+    Start          = 0x02,
+    Start14        = 0x04,
+    NewGame        = 0x11,
+    RadioInfo      = 0x21,
+    Configure      = 0x31,
+    Time           = 0x41,
+    Possess        = 0x42,
+    StartSending   = 0x81,
+    StopSending    = 0x82
 };
 
 
@@ -79,13 +112,14 @@ setup() {
     radio.setPALevel(RF24_PA_MAX);
     radio.setDataRate(RF24_250KBPS);
 
-    radio.enableAckPayload();     // We will be using the Ack Payload feature, so please enable it
-    radio.enableDynamicPayloads();// Ack payloads are dynamic payloads
-    radio.printDetails();         // Dump the configuration of the rf unit for debugging
+    radio.enableDynamicPayloads();// Enable dynamically-sized payloads
+    radio.setAutoAck(false);      // Disable Auto Ack   
+    //radio.printDetails();         // Dump the configuration of the rf unit for debugging
     
     // Open pipes to other node for communication
     radio.openWritingPipe(address[0]);
-    radio.openReadingPipe(1, address[1]); 
+    radio.openReadingPipe(1, address[1]);
+     
     // Attach interrupt handler to interrupt #2 
     // (using pin D2) on BOTH the sender and receiver
     attachInterrupt(digitalPinToInterrupt(rf24_interruptPin), check_radio, LOW);             
@@ -140,3 +174,5 @@ check_radio(void) { // Interrupt Service routine
         Serial.println(receiveTime-transmissionTime);
     }
 }
+
+
