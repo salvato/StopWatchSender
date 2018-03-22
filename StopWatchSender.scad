@@ -2,7 +2,7 @@
 $fn = 80;
 
 font1 = "FreeSans:style=Bold";
-fontSize = 4;
+fontSize = 6;
 
 wallThickness = 2.0;
 
@@ -105,50 +105,51 @@ pedal_center(textLeft, textRight, textCenter) {
             union() {//1
                 // Carcassa
                 container();
-            }// end union() 1
-            //Scassi
-            union() {//2
-                // Scasso pulsante 1
-                translate([width/4, 3*width/4, 34]) {
-                    rotate([0, -slope, 0]) {
-                        cylinder(d = pushButton, h = 8);
-                        // Etichetta pulsante 1
+                // Scritta pulsante 1
+                translate([width/4, 3*width/4, width/4*sin(slope)+minH+wallThickness-0.1]) 
+                    rotate([0, -slope, 0]) 
                         translate([15, 0, 0])
                             rotate([0, -0, -90])
-                                linear_extrude(height = 15.0) 
+                                #linear_extrude(height = 1.0) 
                                     text(textLeft,
                                     font = font1, 
                                     size = fontSize, 
                                     halign = "center");
-                     
-                    }
-                }
-                // Scasso pulsante 2
-                translate([width/4, width/4, 34]) {
-                    rotate([0, -slope, 0]) {
-                        cylinder(d = pushButton, h = 8);
+                // Scritta pulsante 2                     
+                translate([width/4, width/4, width/4*sin(slope)+minH+wallThickness-0.1])
+                    rotate([0, -slope, 0])
                         translate([15, 0, 0])
                             rotate([0, -0, -90])
-                                linear_extrude(height = 15.0)
+                                #linear_extrude(height = 1.0)
                                     text(textRight,
                                     font = font1, 
                                     size = fontSize, 
                                     halign = "center");
-                    }
-                }
-                // Scasso pulsante 3
-                translate([width/2, width/2, 34]) {
-                    rotate([0, -slope, 0]) {
-                        cylinder(d = pushButton, h = 8);
+                // Scritta pulsante 3
+                translate([width/2, width/2, width/2*sin(slope)+minH+wallThickness-0.1])
+                    rotate([0, -slope, 0])
                         translate([15, 0, 0])
                             rotate([0, -0, -90])
-                                linear_extrude(height = 15.0)
+                                #linear_extrude(height = 1.0)
                                     text(textCenter,
                                     font = font1, 
                                     size = fontSize, 
                                     halign = "center");
-                    }
-                }
+            }// end union() 1
+            //Scassi
+            union() {//2
+                // Scasso pulsante 1
+                translate([width/4, 3*width/4, 34]) 
+                    rotate([0, -slope, 0])
+                        cylinder(d = pushButton, h = 8);
+                // Scasso pulsante 2
+                translate([width/4, width/4, 34])
+                    rotate([0, -slope, 0])
+                        cylinder(d = pushButton, h = 8);
+                // Scasso pulsante 3
+                translate([width/2, width/2, 34])
+                    rotate([0, -slope, 0])
+                        cylinder(d = pushButton, h = 8);
             }// end union() 2
         }// end difference() 1    
 }
