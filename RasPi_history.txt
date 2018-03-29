@@ -1,0 +1,291 @@
+$ sudo apt update
+$ sudo apt upgrade
+
+$ git config --global user.email "gabriele.salvato@cnr.it"
+$ git config --global user.name "Gabriele Salvato"
+
+$ sudo apt install qt5-default qtcreator libqt5websockets5-dev libqt5serialport5-dev ssh-askpass
+
+
+$ mkdir qtprojects
+$ cd qtprojects/
+$ git clone https://github.com/salvato/ScorePanel.git
+
+$ sudo apt install hostapd isc-dhcp-server
+
+
+
+We have to configure the access point:
+
+$ sudo nano /etc/hostapd/hostapd.conf
+
+	interface=wlan0
+	ssid=ScorePanels
+	country_code=IT
+	hw_mode=g
+	channel=6
+	macaddr_acl=0
+	auth_algs=1
+	ignore_broadcast_ssid=0
+	wpa=2
+	wpa_passphrase=CusUniMe
+	wpa_key_mgmt=WPA-PSK
+	wpa_pairwise=CCMP
+	wpa_group_rekey=86400
+	ieee80211n=1
+	wme_enabled=1
+
+$ sudo nano /etc/default/hostapd
+		Find the line looking #DAEMON_CONF="" and change it in :
+
+			DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
+$ sudo nano /etc/init.d/hostapd
+		Find the line looking DAEMON_CONF= and change it in :
+
+			DAEMON_CONF=/etc/hostapd/hostapd.conf
+
+
+We have to set up DHCP server:
+
+$ sudo nano /etc/dhcp/dhcpd.conf
+
+
+	#
+	# Sample configuration file for ISC dhcpd for Debian
+	#
+	#
+
+	# The ddns-updates-style parameter controls whether or not the server will
+	# attempt to do a DNS update when a lease is confirmed. We default to the
+	# behavior of the version 2 packages ('none', since DHCP v2 didn't
+	# have support for DDNS.)
+	ddns-update-style none;
+
+	# option definitions common to all supported networks...
+	#option domain-name "example.org";
+	#option domain-name-servers ns1.example.org, ns2.example.org;
+
+	default-lease-time 600;
+	max-lease-time 7200;
+
+	# If this DHCP server is the official DHCP server for the local
+	# network, the authoritative directive should be uncommented.
+	authoritative;
+
+	# Use this to send dhcp log messages to a different log file (you also
+	# have to hack syslog.conf to complete the redirection).
+	log-facility local7;
+
+	# No service will be given on this subnet, but declaring it helps the 
+	# DHCP server to understand the network topology.
+
+	#subnet 10.152.187.0 netmask 255.255.255.0 {
+	#}
+
+	# This is a very basic subnet declaration.
+
+	#subnet 10.254.239.0 netmask 255.255.255.224 {
+	#  range 10.254.239.10 10.254.239.20;
+	#  option routers rtr-239-0-1.example.org, rtr-239-0-2.example.org;
+	#}
+
+	# This declaration allows BOOTP clients to get dynamic addresses,
+	# which we don't really recommend.
+
+	#subnet 10.254.239.32 netmask 255.255.255.224 {
+	#  range dynamic-bootp 10.254.239.40 10.254.239.60;
+	#  option broadcast-address 10.254.239.31;
+	#  option routers rtr-239-32-1.example.org;
+	#}
+
+	# A slightly different configuration for an internal subnet.
+	#subnet 10.5.5.0 netmask 255.255.255.224 {
+	#  range 10.5.5.26 10.5.5.30;
+	#  option domain-name-servers ns1.internal.example.org;
+	#  option domain-name "internal.example.org";
+	#  option routers 10.5.5.1;
+	#  option broadcast-address 10.5.5.31;
+	#  default-lease-time 600;
+	#  max-lease-time 7200;
+	#}
+
+	# Hosts which require special configuration options can be listed in
+	# host statements.   If no address is specified, the address will be
+	# allocated dynamically (if possible), but the host-specific information
+	# will still come from the host declaration.
+
+	#host passacaglia {
+	#  hardware ethernet 0:0:c0:5d:bd:95;
+	#  filename "vmunix.passacaglia";
+	#  server-name "toccata.fugue.com";
+	#}
+
+	# Fixed IP addresses can also be specified for hosts.   These addresses
+	# should not also be listed as being available for dynamic assignment.
+	# Hosts for which fixed IP addresses have been specified can boot using
+	# BOOTP or DHCP.   Hosts for which no fixed address is specified can only
+	# be booted with DHCP, unless there is an address range on the subnet
+	# to which a BOOTP client is connected which has the dynamic-bootp flag
+	# set.
+	#host fantasia {
+	#  hardware ethernet 08:00:07:26:c0:a5;
+	#  fixed-address fantasia.fugue.com;
+	#}
+
+	# You can declare a class of clients and then do address allocation
+	# based on that.   The example below shows a case where all clients
+	# in a certain class get addresses on the 10.17.224/24 subnet, and all
+	# other clients get addresses on the 10.0.29/24 subnet.
+
+	#class "foo" {
+	#  match if substring (option vendor-class-identifier, 0, 4) = "SUNW";
+	#}
+
+	#shared-network 224-29 {
+	#  subnet 10.17.224.0 netmask 255.255.255.0 {
+	#    option routers rtr-224.example.org;
+	#  }
+	#  subnet 10.0.29.0 netmask 255.255.255.0 {
+	#    option routers rtr-29.example.org;
+	#  }
+	#  pool {
+	#    allow members of "foo";
+	#    range 10.17.224.10 10.17.224.250;
+	#  }
+	#  pool {
+	#    deny members of "foo";
+	#    range 10.0.29.10 10.0.29.230;
+	#  }
+	#}
+
+	####################################################
+	# Configurazione della rete di pannelli segnapunti #
+	####################################################
+	subnet 192.168.42.0 netmask 255.255.255.0 {
+		range 192.168.42.2 192.168.42.10;
+		option broadcast-address 192.168.42.255;
+		option routers 192.168.42.1;
+		default-lease-time 3000;
+		max-lease-time 14200;
+		option domain-name "local";
+		option domain-name-servers 192.168.42.1;
+	}
+
+
+
+
+If we want to control the pan and the tilt of the camera with two servos
+we need to start the gpio daemon at boot time:
+
+
+$ sudo nano /etc/rc.local
+
+		Insert:
+
+			#Gabriele Salvato
+			/usr/bin/pigpiod &
+
+		just before 
+			exit 0
+
+
+
+It is time to set it up as a 'daemon', a program that will start when the Pi boots.
+Run the following commands:
+
+$ sudo systemctl hostapd start
+$ sudo systemctl isc-dhcp-server start 
+
+Sono questi due comandi necessari ?
+
+	$ sudo update-rc.d hostapd enable
+	$ sudo update-rc.d isc-dhcp-server enable 
+
+Disable the power management of wifi in order to disable the power off
+of the network interface. Create a new file:
+
+$ nano wifi-power-management-off.service and insert the following text:
+
+	[Unit]
+	Description=Disable power management for wlan0
+	Requires=sys-subsystem-net-devices-wlan0.device
+	After=network.target
+
+	[Service]
+	Type=oneshot
+	ExecStart=/sbin/iwconfig wlan0 power off
+
+	[Install]
+	WantedBy=multi-user.target
+
+   
+$ sudo mv wifi-power-management-off.service /lib/systemd/system/
+$ sudo systemctl enable wifi-power-management-off.service
+
+Check the power save status of your interface:
+ 
+$ iw dev wlan0 get power_save
+
+
+
+$ sudo leafpad /etc/lightdm/lightdm.conf
+
+		# To disable screen blanking
+		xserver-command=X -s 0 -dpms
+
+
+Serve ?
+   37  sudo cp isc-dhcp-server /etc/default/
+
+Servono ?
+   38  sudo ifdown wlan0
+   39  sudo leafpad /etc/network/interfaces
+
+		# interfaces(5) file used by ifup(8) and ifdown(8)
+
+		# Please note that this file is written to be used with dhcpcd
+		# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
+
+		# Include files from /etc/network/interfaces.d:
+		source-directory /etc/network/interfaces.d
+
+		auto lo
+		iface lo inet loopback
+
+		iface eth0 inet manual
+
+		allow-hotplug wlan0
+
+		iface wlan0 inet static
+		    address 192.168.42.1
+		    netmask 255.255.255.0
+
+		#iface wlan0 inet manual
+		#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+		allow-hotplug wlan1
+		iface wlan1 inet manual
+		    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+
+
+   40  cd ../hostapd/
+   41  ls
+   42  sudo cp hostapd.conf /etc/hostapd/
+   43  cd ../default/
+
+
+Serve ?
+   44  sudo cp hostapd /etc/default/
+   45  cd ../init.d/
+Serve ?
+   46  sudo cp hostapd /etc/init.d/
+
+
+Serve ?
+   76  nano /etc/network/interfaces
+
+Serve ?
+   89  sudo chgrp netdev dhcpcd.conf
+
