@@ -1,5 +1,4 @@
-$ sudo apt update
-$ sudo apt upgrade
+$ sudo apt update && sudo apt upgrade -y
 
 $ git config --global user.email "gabriele.salvato@cnr.it"
 $ git config --global user.name "Gabriele Salvato"
@@ -10,9 +9,102 @@ $ sudo apt install qt5-default qtcreator libqt5websockets5-dev libqt5serialport5
 $ mkdir qtprojects
 $ cd qtprojects/
 $ git clone https://github.com/salvato/ScorePanel.git
+$ git clone https://github.com/salvato/SlideShow.git
 
-$ sudo apt install hostapd isc-dhcp-server
 
+SETTING UP A RASPBERRY PI AS AN ACCESS POINT IN A STANDALONE NETWORK (NAT)
+https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md
+
+$ sudo apt install hostapd dnsmasq
+
+Since the configuration files are not ready yet, turn the new software off as follows:
+
+$ sudo systemctl stop dnsmasq
+$ sudo systemctl stop hostapd
+
+
+Configuring a static IP
+
+To configure the static IP address, edit the dhcpcd configuration file with:
+
+$ sudo nano /etc/dhcpcd.conf
+
+Go to the end of the file and edit it so that it looks like the following:
+
+	interface wlan0
+	static ip_address=192.168.42.1/24
+	static routers=192.168.42.1
+	static domain_name_servers=192.168.42.1
+
+
+Now restart the dhcpcd daemon and set up the new wlan0 configuration:
+
+$ sudo service dhcpcd restart
+
+
+Configuring the DHCP server (dnsmasq)
+
+The DHCP service is provided by dnsmasq. 
+By default, the configuration file contains a lot of information
+that is not needed, and it is easier to start from scratch.
+Rename this configuration file, and edit a new one:
+
+$ sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig  
+$ sudo nano /etc/dnsmasq.conf
+
+Type or copy the following information into the dnsmasq configuration file and save it:
+
+# Use the require wireless interface
+# we are going to provide IP addresses between 192.168.4.2 and 192.168.4.20,
+# with a lease time of 24 hours.
+interface=wlan0      
+  dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
+
+
+
+Configuring the access point host software (hostapd):
+
+$ sudo nano /etc/hostapd/hostapd.conf
+
+Insert the following text into the empty file:
+
+	interface=wlan0
+	driver=nl80211
+	ssid=ScorePanels
+	country_code=IT
+	hw_mode=g
+	channel=6
+	wmm_enabled=0
+	macaddr_acl=0
+	auth_algs=1
+	ignore_broadcast_ssid=0
+	wpa=2
+	wpa_passphrase=CusUniMe
+	wpa_key_mgmt=WPA-PSK
+	wpa_pairwise=TKIP
+	rsn_pairwise=CCMP
+
+
+
+$ sudo nano /etc/default/hostapd
+
+Find the line with #DAEMON_CONF, and replace it with this:
+
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
+
+Start it up:
+
+Now start up the remaining services:
+
+$ sudo systemctl start hostapd
+$ sudo systemctl start dnsmasq
+
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 
 We have to configure the access point:
