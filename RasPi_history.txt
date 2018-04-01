@@ -101,6 +101,60 @@ $ sudo systemctl start hostapd
 $ sudo systemctl start dnsmasq
 
 
+
+
+We have to DISABLE Screen Blanking to prevent the disappearing of the Score
+during the match:
+
+$ sudo nano /etc/lightdm/lightdm.conf
+
+Search the line looking:
+		#xserver-command=X
+
+and change it in:
+
+		# To disable screen blanking
+		xserver-command=X -s 0 -dpms
+
+
+We have to disable the power management of wifi in order to disable the power off
+of the network interface:
+
+Create a new file:
+
+
+$ sudo nano /lib/systemd/system/wifi-power-management-off.service
+
+and insert the following text:
+
+	[Unit]
+	Description=Disable power management for wlan0
+	Requires=sys-subsystem-net-devices-wlan0.device
+	After=network.target
+
+	[Service]
+	Type=oneshot
+	ExecStart=/sbin/iwconfig wlan0 power off
+
+	[Install]
+	WantedBy=multi-user.target
+
+And then enable the new service:
+
+$ sudo systemctl enable wifi-power-management-off.service
+
+
+Reboot and check the power save status of your interface:
+
+
+$ iw dev wlan0 get power_save
+
+
+it should be:
+
+Power save: off
+
+
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -319,12 +373,6 @@ Check the power save status of your interface:
  
 $ iw dev wlan0 get power_save
 
-
-
-$ sudo leafpad /etc/lightdm/lightdm.conf
-
-		# To disable screen blanking
-		xserver-command=X -s 0 -dpms
 
 
 Serve ?
