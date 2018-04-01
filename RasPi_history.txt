@@ -117,13 +117,15 @@ and change it in:
 		xserver-command=X -s 0 -dpms
 
 
-We have to disable the power management of wifi in order to disable the power off
-of the network interface:
-
-Create a new file:
+Following a Dougie Lawson post on Oct 20, 2016 in the built-in WiFi on an RPI3
+the power management is always off.
+The driver may report that power management isn't off but it is not giving valid results.
+For other USB WiFi devices it depends on the chipset used. Anyway if
+we have to disable the power management of the WiFi we have to create a new file:
 
 
 $ sudo nano /lib/systemd/system/wifi-power-management-off.service
+
 
 and insert the following text:
 
