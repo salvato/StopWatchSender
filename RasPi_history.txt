@@ -194,6 +194,66 @@ just before
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
+
+Come installare APK manualmente
+
+Vediamo come si effettua tale operazione in sicurezza. 
+Prima di scaricarne ed installarne manualmente uno è necessario seguire 
+una brevissima procedura. 
+Recatevi nelle Impostazioni del vostro dispositivo e cercate la voce Sicurezza;
+quest’ultima si trova talvolta in combinazione con Schermata di blocco,
+e la dicitura da cercare potrebbe quindi essere Scherm. blocco e sicurezza.
+Nell’elenco che visualizzerete dovrete cercare la voce Sorgenti sconosciute,
+che, una volta attivata, 
+“Consente l’installazione delle applicazioni da sorgenti diverse da Play Store.”,
+ovvero proprio quello che fa al caso nostro!
+
+Una volta attivata questa impostazioni siete pronti ad installare manualmente i file .apk. 
+Per installarlo dovrete per prima cosa individuare il file sul vostro dispositivo. 
+Per fare ciò dovrete servirvi di un file manager, ovvero di un’applicazione
+che vi permetta di esplorare il contenuto delle vostre cartelle.
+
+Di solito gli APK scaricati direttamente da smartphone finiscono nella cartella Download.
+Buona parte degli smartphone hanno applicazioni denominate Archivio o simili
+che vi permettono di esplorare le cartelle presenti e di scovare quella denominata 
+appunto Download. 
+
+Se non avete un buon file manager sul vostro smartphone Android potete sempre 
+recuperarlo dal Play Store: provate ad esempio Astro. 
+
+Una volta trovata, cercate l’APK che volete installare e premeteci sopra.
+
+Se il vostro dispositivo è dotato della versione Android 6.0 Marshmallow o superiori, 
+una volta premuto sull’APK, oltre a visualizzare l’apposito pulsante per proseguire 
+con l’installazione, potrete anche consultare i permessi che richiederà l’applicazione 
+per essere eseguita a dovere. 
+
+Non tralasciate queste informazioni: visto che potrebbe capitarvi di installare APK 
+presi appunto da “sorgenti sconosciute“, è sempre bene controllare a cosa si va incontro.
+
+Impossibile aprire file apk
+
+È possibile che tentando di installare un apk scaricato da Internet, 
+si venga accolti da una schermata di errore che solitamente riporta il messaggio 
+
+“Impossibile aprire file apk“. 
+
+Le alternative sono due: o il vostro smartphone/tablet Android è incompatibile 
+con l’applicazione/gioco che state cercando di installare, o il file apk da voi 
+scaricato è in qualche modo corrotto o danneggiato.
+
+Nel primo caso c’è ben poco da fare, vi dovrete rassegnare a non utilizzare 
+quell’applicazione o quel gioco sul vostro dispositivo. 
+
+Potete provare a cercare su Google se effettivamente il vostro dispositivo è 
+incompatibile con quel gioco (di solito è sufficiente cercare la combinazione 
+dei termini “nome dispositivo” + “nome app/gioco“). 
+
+In caso contrario, potrebbe quindi essere incappati in un apk corrotto. 
+
+Provate a cercare lo stesso file da un’altra fonte, facendo comunque attenzione 
+a non incappare in siti poco raccomandabili.
+
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
