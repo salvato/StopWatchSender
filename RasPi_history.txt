@@ -100,31 +100,15 @@ Now start up the remaining services:
 $ sudo systemctl start hostapd
 $ sudo systemctl start dnsmasq
 
-$ sudo nano /etc/sysctl.conf
-
-and uncomment this line (remove #):
-
-net.ipv4.ip_forward=1
-
-
-Add a masquerade for outbound traffic on eth0:
-
-$ sudo iptables -t nat -A  POSTROUTING -o eth0 -j MASQUERADE
-
-Save the iptables rule.
-
-$ sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
-
-sudo nano /etc/rc.local
-
-and add this just above "exit 0" to install these rules on boot.
-
-iptables-restore < /etc/iptables.ipv4.nat
-#
 # If we want to control the pan and the tilt of the 
 # Raspberry camera with two servos, we need to start
 # the gpio daemon at boot time:
-#
+
+sudo nano /etc/rc.local
+
+insert the followin line just before the line 
+exit(0)
+
 /usr/bin/pigpiod &
 
 
@@ -256,7 +240,31 @@ a non incappare in siti poco raccomandabili.
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
+We should start the panel contro program at every restart of the Raspberry:
+
+$ nano ~/.config/lxsession/LXDE-pi/autostart
+
+change the lines 
+@xscreensaver -no-splash
+
+commenting it since we dont want that a screensaver can obscure the panel
+
+#@xscreensaver -no-splash
+
+and insert a line to start at every reboot the panel control program:
+
+@~/panelChooser &
+
+save and reboot.
+
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 We have to configure the access point:
 
