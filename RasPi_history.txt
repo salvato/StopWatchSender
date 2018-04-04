@@ -79,7 +79,7 @@ Insert the following text into the empty file:
 	auth_algs=1
 	ignore_broadcast_ssid=0
 	wpa=2
-	wpa_passphrase=CusUniMe
+	wpa_passphrase=myVerySecretPassword
 	wpa_key_mgmt=WPA-PSK
 	wpa_pairwise=TKIP
 	rsn_pairwise=CCMP
@@ -256,7 +256,7 @@ commenting it since we dont want that a screensaver can obscure the panel
 
 and insert a line to start at every reboot the panel control program:
 
-@~/panelChooser &
+@/home/pi/panelChooser &
 
 save and reboot.
 
@@ -279,7 +279,7 @@ $ sudo nano /etc/hostapd/hostapd.conf
 	auth_algs=1
 	ignore_broadcast_ssid=0
 	wpa=2
-	wpa_passphrase=CusUniMe
+	wpa_passphrase=myVerySecretPassword
 	wpa_key_mgmt=WPA-PSK
 	wpa_pairwise=CCMP
 	wpa_group_rekey=86400
