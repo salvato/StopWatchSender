@@ -70,7 +70,7 @@ Insert the following text into the empty file:
 
 	interface=wlan0
 	driver=nl80211
-	ssid=ScorePanels
+	ssid=myOwnScorePanelsSSID
 	country_code=IT
 	hw_mode=g
 	channel=6
@@ -79,7 +79,7 @@ Insert the following text into the empty file:
 	auth_algs=1
 	ignore_broadcast_ssid=0
 	wpa=2
-	wpa_passphrase=CusUniMe
+	wpa_passphrase=myVerySecretPassword
 	wpa_key_mgmt=WPA-PSK
 	wpa_pairwise=TKIP
 	rsn_pairwise=CCMP
@@ -181,9 +181,6 @@ just before
 
 Come installare APK manualmente
 
-Vediamo come si effettua tale operazione in sicurezza. 
-Prima di scaricarne ed installarne manualmente uno è necessario seguire 
-una brevissima procedura. 
 Recatevi nelle Impostazioni del vostro dispositivo e cercate la voce Sicurezza;
 quest’ultima si trova talvolta in combinazione con Schermata di blocco,
 e la dicitura da cercare potrebbe quindi essere Scherm. blocco e sicurezza.
@@ -193,14 +190,10 @@ che, una volta attivata,
 ovvero proprio quello che fa al caso nostro!
 
 Una volta attivata questa impostazioni siete pronti ad installare manualmente i file .apk. 
+
 Per installarlo dovrete per prima cosa individuare il file sul vostro dispositivo. 
 Per fare ciò dovrete servirvi di un file manager, ovvero di un’applicazione
 che vi permetta di esplorare il contenuto delle vostre cartelle.
-
-Di solito gli APK scaricati direttamente da smartphone finiscono nella cartella Download.
-Buona parte degli smartphone hanno applicazioni denominate Archivio o simili
-che vi permettono di esplorare le cartelle presenti e di scovare quella denominata 
-appunto Download. 
 
 Se non avete un buon file manager sul vostro smartphone Android potete sempre 
 recuperarlo dal Play Store: provate ad esempio Astro. 
@@ -215,8 +208,6 @@ per essere eseguita a dovere.
 Non tralasciate queste informazioni: visto che potrebbe capitarvi di installare APK 
 presi appunto da “sorgenti sconosciute“, è sempre bene controllare a cosa si va incontro.
 
-Impossibile aprire file apk
-
 È possibile che tentando di installare un apk scaricato da Internet, 
 si venga accolti da una schermata di errore che solitamente riporta il messaggio 
 
@@ -225,18 +216,6 @@ si venga accolti da una schermata di errore che solitamente riporta il messaggio
 Le alternative sono due: o il vostro smartphone/tablet Android è incompatibile 
 con l’applicazione/gioco che state cercando di installare, o il file apk da voi 
 scaricato è in qualche modo corrotto o danneggiato.
-
-Nel primo caso c’è ben poco da fare, vi dovrete rassegnare a non utilizzare 
-quell’applicazione o quel gioco sul vostro dispositivo. 
-
-Potete provare a cercare su Google se effettivamente il vostro dispositivo è 
-incompatibile con quel gioco (di solito è sufficiente cercare la combinazione 
-dei termini “nome dispositivo” + “nome app/gioco“). 
-
-In caso contrario, potrebbe quindi essere incappati in un apk corrotto. 
-
-Provate a cercare lo stesso file da un’altra fonte, facendo comunque attenzione 
-a non incappare in siti poco raccomandabili.
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -256,7 +235,7 @@ commenting it since we dont want that a screensaver can obscure the panel
 
 and insert a line to start at every reboot the panel control program:
 
-@~/panelChooser &
+@/home/pi/panelChooser &
 
 save and reboot.
 
@@ -271,7 +250,7 @@ We have to configure the access point:
 $ sudo nano /etc/hostapd/hostapd.conf
 
 	interface=wlan0
-	ssid=ScorePanels
+	ssid=myOwnScorePanelsSSID
 	country_code=IT
 	hw_mode=g
 	channel=6
@@ -279,7 +258,7 @@ $ sudo nano /etc/hostapd/hostapd.conf
 	auth_algs=1
 	ignore_broadcast_ssid=0
 	wpa=2
-	wpa_passphrase=CusUniMe
+	wpa_passphrase=myVerySecretPassword
 	wpa_key_mgmt=WPA-PSK
 	wpa_pairwise=CCMP
 	wpa_group_rekey=86400
