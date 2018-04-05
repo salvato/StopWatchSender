@@ -54,7 +54,7 @@ enum commands {
     AreYouThere    = 0xAA,
     Stop           = 0x01,
     Start          = 0x02,
-    Start14        = 0x04,
+    Start24        = 0x04,
     NewGame        = 0x11,
     RadioInfo      = 0x21,
     Configure      = 0x31,
@@ -77,11 +77,16 @@ const byte rf24_interruptPin = 2;// IRQ #0 on Arduino Nano
 // Push Buttons
 const byte stopButtonPin    = 3;
 const byte startButtonPin   = 4;
-const byte start14ButtonPin = 5;
+const byte start24ButtonPin = 5;
+const byte clickPin         = 6;
+unsigned   startFrq         = 440;
+unsigned   stopFrq          = 220;
+unsigned   start24Frw       = 880;
+unsigned long clickDur      = 200UL;
 
-/////////////////////////////////////////////////////////////////////
-// Arduino Pins 2, 3, 4, 5, 9, 10, 11, 12, 13 Are already occupied //
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+// Arduino Pins 2, 3, 4, 5, 6, 9, 10, 11, 12, 13 Are already occupied //
+////////////////////////////////////////////////////////////////////////
 
 byte buttonStatus = 0;
 
@@ -102,7 +107,7 @@ setup() {
 
     pinMode(stopButtonPin,    INPUT_PULLUP);
     pinMode(startButtonPin,   INPUT_PULLUP);
-    pinMode(start14ButtonPin, INPUT_PULLUP);
+    pinMode(start24ButtonPin, INPUT_PULLUP);
     
     Serial.println(F("/home/gabriele/qtprojects/Arduino/StopWatchSender"));
 
@@ -130,9 +135,9 @@ setup() {
 /********************** Main Loop *********************/
 void 
 loop() {
-    buttonStatus = (digitalRead(start14ButtonPin) << 2) | 
-                   (digitalRead(startButtonPin)   << 1) | 
-                    digitalRead(stopButtonPin);
+    buttonStatus = (!digitalRead(start24ButtonPin) << 2) | 
+                   (!digitalRead(startButtonPin)   << 1) | 
+                    !digitalRead(stopButtonPin);
     if(buttonStatus) {
         if(buttonStatus < 0x07) {
             transmissionTime = millis();
@@ -142,11 +147,19 @@ loop() {
           Serial.print("Error ");
           Serial.println(buttonStatus);
         }
+        noTone(clickPin);
+        if(buttonStatus & 0x04)
+          tone(clickPin, start24Frw, clickDur);
+        else if(buttonStatus & 0x02)
+          tone(clickPin, startFrq, clickDur);
+        else if(buttonStatus & 0x01)
+          tone(clickPin, stopFrq, clickDur);
         delay(50);
         while(buttonStatus) {
-          buttonStatus = (digitalRead(start14ButtonPin) << 2) | 
-                         (digitalRead(startButtonPin)   << 1) | 
-                          digitalRead(stopButtonPin);
+          buttonStatus = (!digitalRead(start24ButtonPin) << 2) | 
+                         (!digitalRead(startButtonPin)   << 1) | 
+                          !digitalRead(stopButtonPin);
+
         }
         delay(50);
     }
@@ -161,7 +174,7 @@ check_radio(void) { // Interrupt Service routine
     radio.whatHappened(tx, fail, rx);// What happened?
     
     if(tx) { // Have we successfully transmitted?
-        Serial.print(F(" Send OK ")); 
+        //Serial.println(F(" Send OK ")); 
     }
     
     if(fail) { // Have we failed to transmit?
