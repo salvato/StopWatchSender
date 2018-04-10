@@ -79,9 +79,9 @@ const byte stopButtonPin    = 3;
 const byte startButtonPin   = 4;
 const byte start24ButtonPin = 5;
 const byte clickPin         = 6;
-unsigned   startFrq         = 440;
-unsigned   stopFrq          = 220;
-unsigned   start24Frw       = 880;
+unsigned   startFrq         = 1000;
+unsigned   stopFrq          = 800;
+unsigned   start24Frw       = 1200;
 unsigned long clickDur      = 200UL;
 
 ////////////////////////////////////////////////////////////////////////
