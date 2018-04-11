@@ -2,7 +2,7 @@
 $fn = 80;
 
 font1 = "FreeSans:style=Bold";
-fontSize = 8;
+fontSize = 7;
 
 wallThickness = 2.0;
 
@@ -105,63 +105,101 @@ pedal_center(textLeft, textRight, textCenter) {
             union() {//1
                 // Carcassa
                 container();
-                // Scritta pulsante 1
-                translate([2*width/3, 2*width/3-5.0, width/4*sin(slope)+minH+wallThickness+4.2]) 
+                // Titolo Pannello Gara
+                translate([110.0, width/2, 10.0*sin(slope)+minH+wallThickness-0.1]) 
                     rotate([0, -slope, 0]) 
-                        translate([15, 0, 0])
+                        translate([-0.5*fontSize, 0.0, 0])
                             rotate([0, -0, -90])
                                 #linear_extrude(height = 1.5) 
-                                    text("Tempo di Gioco",
+                                    text("Cronometro Gara",
                                     font = font1, 
                                     size = fontSize, 
                                     halign = "center");
                 // Scritta pulsante 1
-                translate([width/4, 3*width/4, width/4*sin(slope)+minH+wallThickness-0.1]) 
+                translate([25.0, width-30.0, 25.0*sin(slope)+minH+wallThickness-0.1]) 
                     rotate([0, -slope, 0]) 
-                        translate([15, 0, 0])
+                        translate([10, 0, 0])
                             rotate([0, -0, -90])
                                 #linear_extrude(height = 1.5) 
-                                    text(textLeft,
+                                    text("Start",
                                     font = font1, 
                                     size = fontSize, 
                                     halign = "center");
                 // Scritta pulsante 2                     
-                translate([width/4, width/4, width/4*sin(slope)+minH+wallThickness-0.1])
+                translate([25.0, 30.0, 25.0*sin(slope)+minH+wallThickness-0.1])
                     rotate([0, -slope, 0])
-                        translate([15, 0, 0])
+                        translate([10, 0, 0])
                             rotate([0, -0, -90])
                                 #linear_extrude(height = 1.5)
-                                    text(textRight,
+                                    text("Stop",
                                     font = font1, 
                                     size = fontSize, 
                                     halign = "center");
+                // Scritta pulsante 3
+                translate([70.0, width-35.0, 70.0*sin(slope)+minH+wallThickness-0.1]) 
+                    rotate([0, -slope, 0]) 
+                        translate([10, 0, 0])
+                            rotate([0, -0, -90])
+                                #linear_extrude(height = 1.5) 
+                                    text("Timeout",
+                                    font = font1, 
+                                    size = fontSize, 
+                                    halign = "center");
+                // Scritta pulsante 4                     
+                translate([70.0, 35.0, 70.0*sin(slope)+minH+wallThickness-0.1])
+                    rotate([0, -slope, 0])
+                        translate([10, 0, 0])
+                            rotate([0, -0, -90])
+                                #linear_extrude(height = 1.5)
+                                    text("Interval",
+                                    font = font1, 
+                                    size = fontSize, 
+                                    halign = "center");
+                // Cornicetta
+                difference() {
+                    d = 8.0;
+                    translate([d, d, minH+0.9*wallThickness])
+                        rotate([0, -slope, 0])
+                            cube([width-2.0*d, width-2.0*d, wallThickness]);
+                    translate([d+wallThickness, d+wallThickness, minH])
+                        rotate([0, -slope, 0])
+                            cube([width-2.0*(d+wallThickness), width-2.0*(d+wallThickness), 3.0*wallThickness]);
+                }
             }// end union() 1
             //Scassi
             union() {//2
-                // Scasso pulsante 1
-                translate([width/4, 3*width/4, 34]) 
+               // Scasso pulsante 1
+                translate([25.0, width-35.0, 25.0*sin(slope)+minH+wallThickness-4]) 
                     rotate([0, -slope, 0])
                         #cylinder(d = pushButton, h = 8);
                 // Scasso pulsante 2
-                translate([width/4, width/4, 34])
+                translate([25.0, 35.0, 25.0*sin(slope)+minH+wallThickness-4])
                     rotate([0, -slope, 0])
                         #cylinder(d = pushButton, h = 8);
-            }// end union() 2
-            // Fori altoparlante
-            intersection() {
-                for (x= [-10.0:5.0:10.0])
-                    for (y= [-10.0:5.0:10.0])
-                        translate([3*width/4-x-10, width/4-y-10, 39]) 
-                            rotate([0, -slope, 0])
-                                #cylinder(d = 3, h = 8);
-                translate([3*width/4-10, width/4-10, 39]) 
+                // Scasso pulsante 3
+                translate([70.0, width-35.0, 80.0*sin(slope)+minH+wallThickness-4]) 
                     rotate([0, -slope, 0])
-                        #cylinder(d = 20.0, h = 8);
-            }
-            // Foro Led Accensione
-            translate([width-20.0, 27.0, 41]) 
-                rotate([0, -slope, 0])
-                    #cylinder(d = 5, h = 8);
+                        #cylinder(d = pushButton, h = 8);
+                // Scasso pulsante 4
+                translate([70.0, 35.0, 80.0*sin(slope)+minH+wallThickness-4])
+                    rotate([0, -slope, 0])
+                        #cylinder(d = pushButton, h = 8);
+                // Fori altoparlante
+                intersection() {
+                    for (x= [-10.0:5.0:10.0])
+                        for (y= [-10.0:5.0:10.0])
+                            translate([width-x-25.0, 0.5*width-y, (width-20.0)*sin(slope)+minH+wallThickness-4]) 
+                                rotate([0, -slope, 0])
+                                    #cylinder(d = 3, h = 8);
+                    translate([width-25.0, 0.5*width, (width-20.0)*sin(slope)+minH+wallThickness-4]) 
+                        rotate([0, -slope, 0])
+                            #cylinder(d = 20.0, h = 8);
+                }
+                // Foro Led Accensione
+                translate([width-20.0, 27.0, 41]) 
+                    rotate([0, -slope, 0])
+                        #cylinder(d = 5, h = 8);
+            }// end union() 2
 
         }// end difference() 1    
 }
