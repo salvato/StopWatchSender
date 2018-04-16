@@ -106,17 +106,17 @@ pedal_center(textLeft, textRight, textCenter) {
                 // Carcassa
                 container();
                 // Titolo Pannello Gara
-                translate([110.0, width/2, 10.0*sin(slope)+minH+wallThickness-0.1]) 
+                translate([125.0, 90.0, 125.0*sin(slope)+minH+wallThickness-0.1]) 
                     rotate([0, -slope, 0]) 
                         translate([-0.5*fontSize, 0.0, 0])
                             rotate([0, -0, -90])
                                 #linear_extrude(height = 1.5) 
-                                    text("Cronometro Gara",
+                                    text("Stopwatch",
                                     font = font1, 
-                                    size = fontSize, 
-                                    halign = "center");
+                                    size = fontSize-1, 
+                                    halign = "right");
                 // Scritta pulsante 1
-                translate([25.0, width-30.0, 25.0*sin(slope)+minH+wallThickness-0.1]) 
+                translate([25.0, width-40.0, 25.0*sin(slope)+minH+wallThickness-0.1]) 
                     rotate([0, -slope, 0]) 
                         translate([10, 0, 0])
                             rotate([0, -0, -90])
@@ -126,7 +126,7 @@ pedal_center(textLeft, textRight, textCenter) {
                                     size = fontSize, 
                                     halign = "center");
                 // Scritta pulsante 2                     
-                translate([25.0, 30.0, 25.0*sin(slope)+minH+wallThickness-0.1])
+                translate([25.0, 40.0, 25.0*sin(slope)+minH+wallThickness-0.1])
                     rotate([0, -slope, 0])
                         translate([10, 0, 0])
                             rotate([0, -0, -90])
@@ -136,7 +136,7 @@ pedal_center(textLeft, textRight, textCenter) {
                                     size = fontSize, 
                                     halign = "center");
                 // Scritta pulsante 3
-                translate([70.0, width-35.0, 70.0*sin(slope)+minH+wallThickness-0.1]) 
+                translate([70.0, width-40.0, 70.0*sin(slope)+minH+wallThickness-0.1]) 
                     rotate([0, -slope, 0]) 
                         translate([10, 0, 0])
                             rotate([0, -0, -90])
@@ -146,7 +146,7 @@ pedal_center(textLeft, textRight, textCenter) {
                                     size = fontSize, 
                                     halign = "center");
                 // Scritta pulsante 4                     
-                translate([70.0, 35.0, 70.0*sin(slope)+minH+wallThickness-0.1])
+                translate([70.0, 40.0, 70.0*sin(slope)+minH+wallThickness-0.1])
                     rotate([0, -slope, 0])
                         translate([10, 0, 0])
                             rotate([0, -0, -90])
@@ -169,19 +169,19 @@ pedal_center(textLeft, textRight, textCenter) {
             //Scassi
             union() {//2
                // Scasso pulsante 1
-                translate([25.0, width-35.0, 25.0*sin(slope)+minH+wallThickness-4]) 
+                translate([25.0, width-40.0, 25.0*sin(slope)+minH+wallThickness-4]) 
                     rotate([0, -slope, 0])
                         #cylinder(d = pushButton, h = 8);
                 // Scasso pulsante 2
-                translate([25.0, 35.0, 25.0*sin(slope)+minH+wallThickness-4])
+                translate([25.0, 40.0, 25.0*sin(slope)+minH+wallThickness-4])
                     rotate([0, -slope, 0])
                         #cylinder(d = pushButton, h = 8);
                 // Scasso pulsante 3
-                translate([70.0, width-35.0, 80.0*sin(slope)+minH+wallThickness-4]) 
+                translate([70.0, width-40.0, 80.0*sin(slope)+minH+wallThickness-4]) 
                     rotate([0, -slope, 0])
                         #cylinder(d = pushButton, h = 8);
                 // Scasso pulsante 4
-                translate([70.0, 35.0, 80.0*sin(slope)+minH+wallThickness-4])
+                translate([70.0, 40.0, 80.0*sin(slope)+minH+wallThickness-4])
                     rotate([0, -slope, 0])
                         #cylinder(d = pushButton, h = 8);
                 // Fori altoparlante
@@ -196,7 +196,7 @@ pedal_center(textLeft, textRight, textCenter) {
                             #cylinder(d = 20.0, h = 8);
                 }
                 // Foro Led Accensione
-                translate([width-20.0, 27.0, 41]) 
+                translate([width-30.0, 37.0, 41]) 
                     rotate([0, -slope, 0])
                         #cylinder(d = 5, h = 8);
             }// end union() 2
