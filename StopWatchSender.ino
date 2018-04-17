@@ -1,7 +1,12 @@
+//#define MY_DEBUG
+
 #include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
-#include "printf.h"
+
+#ifdef MY_DEBUG
+  #include "printf.h"
+#endif
 
 // Pinout  nRF24L01:
 // 1  GND
@@ -53,8 +58,10 @@
 enum commands {
     AreYouThere    = 0xAA,
     Stop           = 0x01,
-    Start          = 0x02,
-    Start24        = 0x04,
+    Start0         = 0x02,
+    Start1         = 0x04,
+    Start2         = 0x06,
+    Start3         = 0x08,
     NewGame        = 0x11,
     RadioInfo      = 0x21,
     Configure      = 0x31,
@@ -67,28 +74,48 @@ enum commands {
 
 // Function prototypes
 void check_radio(void);
+void error(int errNum);
 
-// Hardware pin (Arduino) configuration
+//////////////////////////////////////////
+// Hardware pin (Arduino) configuration //
+//////////////////////////////////////////
+
 // Radio nRF24
-RF24 radio(9, 10); // Set up nRF24L01 radio on Arduino SPI bus plus Arduino pins 9(CE) & 10 (CSN)
-                   // MOSI on Arduino Pin 11 MISO on Arduino pin 12 SCL on Arduino Pin 13
-const byte rf24_interruptPin = 2;// IRQ #0 on Arduino Nano
+RF24 radio(9, 10); // Set up nRF24L01 radio on Arduino SPI bus plus 
+                   // Arduino pin    nRF24l01+ pin
+                   //  9 (CE)
+                   // 10 (CSN)
+                   // 11 (MOSI)
+                   // 12 (MISO)
+                   // 13 (SCK)
 
-// Push Buttons
+ const byte rf24_interruptPin = 2;// IRQ #0 on Arduino Nano
+
+// Push Buttons (All placed in Atmega328p Port D)
 const byte stopButtonPin    = 3;
-const byte startButtonPin   = 4;
-const byte start24ButtonPin = 5;
-const byte clickPin         = 6;
-unsigned   startFrq         = 1000;
-unsigned   stopFrq          = 800;
-unsigned   start24Frw       = 1200;
-unsigned long clickDur      = 200UL;
+const byte start0ButtonPin  = 4;
+const byte start1ButtonPin  = 5;
+const byte start2ButtonPin  = 6;
+const byte start3ButtonPin  = 7;
 
-////////////////////////////////////////////////////////////////////////
-// Arduino Pins 2, 3, 4, 5, 6, 9, 10, 11, 12, 13 Are already occupied //
-////////////////////////////////////////////////////////////////////////
+// Click on Push
+const byte    clickPin         = A0;
+unsigned      stopFrq          = 800;
+unsigned      start0Frq        = 1000;
+unsigned      start1Frq        = 1200;
+unsigned      start2Frq        = 1400;
+unsigned      start3Frq        = 1600;
+unsigned      errFrqOn         = 600;
+unsigned      errFrqOff        = 1800;
+
+unsigned long clickDur         = 200UL;
+
+///////////////////////////////////////////////////////////////////////////
+// Arduino Pins 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13 Are already occupied //
+///////////////////////////////////////////////////////////////////////////
 
 byte buttonStatus = 0;
+byte buttonMask   = B11111000;
 
 static uint32_t message_count = 0;
 
@@ -96,20 +123,30 @@ byte address[][5] = { 0x01,0x23,0x45,0x67,0x89 ,
                       0x01,0x23,0x45,0x67,0x89
                     };
 
+#ifdef MY_DEBUG
 unsigned long transmissionTime;
 unsigned long receiveTime;
+#endif
 
 /********************** Setup *********************/
 void 
 setup() {
+  
+#ifdef MY_DEBUG
     Serial.begin(115200);
     printf_begin();
+#endif
 
-    pinMode(stopButtonPin,    INPUT_PULLUP);
-    pinMode(startButtonPin,   INPUT_PULLUP);
-    pinMode(start24ButtonPin, INPUT_PULLUP);
+    // All the pins are HIGH if no push button has been pressed
+    pinMode(stopButtonPin,   INPUT_PULLUP);
+    pinMode(start0ButtonPin, INPUT_PULLUP);
+    pinMode(start1ButtonPin, INPUT_PULLUP);
+    pinMode(start2ButtonPin, INPUT_PULLUP);
+    pinMode(start3ButtonPin, INPUT_PULLUP);
     
-    Serial.println(F("/home/gabriele/qtprojects/Arduino/StopWatchSender"));
+#ifdef MY_DEBUG
+    Serial.println(F("StopWatchSender"));
+#endif
 
     // Setup and configure rf radio
     radio.begin();  
@@ -119,7 +156,10 @@ setup() {
 
     radio.enableDynamicPayloads();// Enable dynamically-sized payloads
     radio.setAutoAck(false);      // Disable Auto Ack   
-    //radio.printDetails();         // Dump the configuration of the rf unit for debugging
+
+#ifdef MY_DEBUG
+    radio.printDetails();         // Dump the configuration of the rf unit for debugging
+#endif
     
     // Open pipes to other node for communication
     radio.openWritingPipe(address[0]);
@@ -135,31 +175,27 @@ setup() {
 /********************** Main Loop *********************/
 void 
 loop() {
-    buttonStatus = (!digitalRead(start24ButtonPin) << 2) | 
-                   (!digitalRead(startButtonPin)   << 1) | 
-                    !digitalRead(stopButtonPin);
+    // Reading Port D at once
+    buttonStatus = !PIND & buttonMask;
     if(buttonStatus) {
-        if(buttonStatus < 0x07) {
-            transmissionTime = millis();
-            radio.startWrite(&buttonStatus, sizeof(buttonStatus), 0);
-        }
-        else {
-          Serial.print("Error ");
-          Serial.println(buttonStatus);
-        }
+#ifdef MY_DEBUG
+        transmissionTime = millis();
+#endif
+        radio.startWrite(&buttonStatus, sizeof(buttonStatus), 0);
         noTone(clickPin);
-        if(buttonStatus & 0x04)
-          tone(clickPin, start24Frw, clickDur);
-        else if(buttonStatus & 0x02)
-          tone(clickPin, startFrq, clickDur);
-        else if(buttonStatus & 0x01)
+        if(buttonStatus      & 1 << stopButtonPin)
           tone(clickPin, stopFrq, clickDur);
+        else if(buttonStatus & 1 << start0ButtonPin)
+          tone(clickPin, start0Frq, clickDur);
+        else if(buttonStatus & 1 << start1ButtonPin)
+          tone(clickPin, start1Frq, clickDur);
+        else if(buttonStatus & 1 << start2ButtonPin)
+          tone(clickPin, start2Frq, clickDur);
+        else if(buttonStatus & 1 << start3ButtonPin)
+          tone(clickPin, start3Frq, clickDur);
         delay(50);
         while(buttonStatus) {
-          buttonStatus = (!digitalRead(start24ButtonPin) << 2) | 
-                         (!digitalRead(startButtonPin)   << 1) | 
-                          !digitalRead(stopButtonPin);
-
+          buttonStatus = !PIND & buttonMask;
         }
         delay(50);
     }
@@ -169,23 +205,42 @@ loop() {
 /******* Interrupt Service Routine *********************/
 void 
 check_radio(void) { // Interrupt Service routine
+#ifdef MY_DEBUG
     receiveTime = millis();
+#endif
     bool tx, fail, rx;
     radio.whatHappened(tx, fail, rx);// What happened?
     
+#ifdef MY_DEBUG
     if(tx) { // Have we successfully transmitted?
-        //Serial.println(F(" Send OK ")); 
+        Serial.println(F(" Send OK ")); 
     }
-    
+#endif    
     if(fail) { // Have we failed to transmit?
-        Serial.println(F(" Send Failed !"));  
+      error(10);
+#ifdef MY_DEBUG
+        Serial.println(F(" Send Failed !"));
+#endif
     }
     
     if(rx || radio.available()) {// Did we receive a message?
         radio.read(&message_count,sizeof(message_count));
+#ifdef MY_DEBUG
         Serial.print(F(" Return Time: "));
         Serial.println(receiveTime-transmissionTime);
+#endif
     }
 }
 
+
+void
+error(int errNum) {
+  noTone(clickPin);
+  for(int i=0; i< errNum; i++) {
+    tone(clickPin, errFrqOn, clickDur);
+    delay(clickDur);
+    tone(clickPin, errFrqOff, clickDur);
+    delay(clickDur);
+  }
+}
 
