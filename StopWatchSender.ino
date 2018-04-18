@@ -81,13 +81,16 @@ void error(int errNum);
 //////////////////////////////////////////
 
 // Radio nRF24
-RF24 radio(9, 10); // Set up nRF24L01 radio on Arduino SPI bus plus 
+RF24 radio(9, 10); // Set up nRF24L01 radio on Arduino SPI bus plus
+                   //
                    // Arduino pin    nRF24l01+ pin
-                   //  9 (CE)
-                   // 10 (CSN)
-                   // 11 (MOSI)
-                   // 12 (MISO)
-                   // 13 (SCK)
+                   //------------------------------
+                   //  2 (IRQ2)          8 (IRQ)
+                   //  9 (CE)            3 (CE)
+                   // 10 (CSN)           4 (CSN)
+                   // 11 (MOSI)          6 (MOSI)
+                   // 12 (MISO)          7 (MISO)
+                   // 13 (SCK)           5 (SCK)
 
  const byte rf24_interruptPin = 2;// IRQ #0 on Arduino Nano
 
