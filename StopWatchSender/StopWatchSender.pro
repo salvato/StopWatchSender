@@ -1,6 +1,10 @@
-update=Wed 18 Apr 2018 10:22:27 CEST
+update=Thu 19 Apr 2018 16:01:00 CEST
 version=1
 last_client=kicad
+[general]
+version=1
+RootSch=
+BoardNm=
 [pcbnew]
 version=1
 LastNetListRead=
@@ -25,7 +29,7 @@ version=1
 NetIExt=net
 [eeschema]
 version=1
-LibDir=/home/rov/Arduino/sketches/StopWatchSender/StopWatchSender/KiCadLibs/mysensors_radios.pretty;/home/rov/Arduino/sketches/StopWatchSender/StopWatchSender/KiCadLibs/mysensors_symbols;/home/rov/Arduino/sketches/StopWatchSender/StopWatchSender/KiCadLibs
+LibDir=
 [eeschema/libraries]
 LibName1=power
 LibName2=device
@@ -59,7 +63,14 @@ LibName29=opto
 LibName30=atmel
 LibName31=contrib
 LibName32=valves
-LibName33=KiCadLibs/mysensors_symbols/mysensors_arduino
-LibName34=KiCadLibs/mysensors_symbols/mysensors_radios
-[general]
-version=1
+LibName33=KiCadLibs/IUT_KiCad/IUTKiCadLibraries/library/libraryIUT
+LibName34=KiCadLibs/mysensors_symbols/mysensors_arduino
+LibName35=KiCadLibs/mysensors_symbols/mysensors_connectors
+LibName36=KiCadLibs/mysensors_symbols/mysensors_logic
+LibName37=KiCadLibs/mysensors_symbols/mysensors_mcu
+LibName38=KiCadLibs/mysensors_symbols/mysensors_memories
+LibName39=KiCadLibs/mysensors_symbols/mysensors_network
+LibName40=KiCadLibs/mysensors_symbols/mysensors_radios
+LibName41=KiCadLibs/mysensors_symbols/mysensors_regulators
+LibName42=KiCadLibs/mysensors_symbols/mysensors_security
+LibName43=KiCadLibs/mysensors_symbols/mysensors_sensors
