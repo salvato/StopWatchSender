@@ -18,7 +18,7 @@ lHeigth = 20;
 
 // Cosa disegnare ?
 upper = true;
-lower = false;
+lower = true;
 
 //
 // Moduli
