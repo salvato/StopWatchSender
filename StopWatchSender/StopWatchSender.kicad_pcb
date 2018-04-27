@@ -2,7 +2,7 @@
 
   (general
     (links 65)
-    (no_connects 0)
+    (no_connects 2)
     (area 78.689999 53.289999 214.680001 129.590001)
     (thickness 1.6)
     (drawings 8)
@@ -45,7 +45,7 @@
   )
 
   (setup
-    (last_trace_width 1)
+    (last_trace_width 0.25)
     (user_trace_width 0.25)
     (user_trace_width 0.5)
     (user_trace_width 0.75)
@@ -369,113 +369,68 @@
       (net 4 "Net-(IC1-Pad28)"))
     (pad 29 thru_hole oval (at 13.97 0 90) (size 2.19964 1.50114) (drill 0.8001) (layers *.Cu *.Mask F.SilkS)
       (net 2 GND))
-    (model Socket_Strips.3dshapes/Socket_Strip_Straight_1x02.wrl
-      (at (xyz -0.15 0.2 0))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
-    )
-    (model Socket_Strips.3dshapes/Socket_Strip_Straight_1x03.wrl
-      (at (xyz 0.55 0.1 0))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 90))
-    )
-    (model Socket_Strips.3dshapes/Socket_Strip_Straight_1x12.wrl
-      (at (xyz 0 0.3 0))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
-    )
-    (model Socket_Strips.3dshapes/Socket_Strip_Straight_1x12.wrl
-      (at (xyz 0 -0.3 0))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
-    )
-    (model Socket_Strips.3dshapes/Socket_Strip_Straight_1x02.wrl
-      (at (xyz 0.25 0.2 0))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
-    )
     (model ${MYSLOCAL}/mysensors.3dshapes/mysensors_arduino.3dshapes/arduino_pro_mini.wrl
-      (at (xyz -0.05 0 0.48))
+      (at (xyz -0.05 0 0.18))
       (scale (xyz 0.395 0.395 0.395))
       (rotate (xyz 0 0 180))
     )
     (model SMD_Packages.3dshapes/TQFP-32.wrl
-      (at (xyz 0.05 0 0.5125))
+      (at (xyz 0.05 0 0.2125))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 315))
     )
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x12.wrl
-      (at (xyz 0 -0.3 0.445))
+    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x12_Pitch2.54mm.wrl
+      (at (xyz -0.55 -0.3 0.145))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 180 0))
+      (rotate (xyz 0 180 -90))
     )
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x12.wrl
-      (at (xyz 0 0.3 0.445))
+    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x12_Pitch2.54mm.wrl
+      (at (xyz -0.55 0.3 0.145))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 180 0))
-    )
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x03.wrl
-      (at (xyz 0.55 0.1 0.445))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 180 90))
-    )
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x02.wrl
-      (at (xyz 0.25 0.2 0.445))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 180 0))
-    )
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x02.wrl
-      (at (xyz -0.15 0.2 0.445))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 180 0))
+      (rotate (xyz 0 180 -90))
     )
     (model ${MYSLOCAL}/mysensors.3dshapes/w.lain.3dshapes/smd_leds/led_0603.wrl
-      (at (xyz -0.3 0 0.5125))
+      (at (xyz -0.3 0 0.2125))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
     (model ${MYSLOCAL}/mysensors.3dshapes/w.lain.3dshapes/smd_leds/led_0603.wrl
-      (at (xyz 0.55 -0.175 0.5125))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
-    )
-    (model Pin_Headers.3dshapes/Pin_Header_Angled_1x06.wrl
-      (at (xyz -0.65 0 0.5125))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 270))
-    )
-    (model Resistors_SMD.3dshapes/R_0603.wrl
-      (at (xyz -0.3 -0.05 0.5125))
+      (at (xyz 0.55 -0.175 0.2125))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
     (model Resistors_SMD.3dshapes/R_0603.wrl
-      (at (xyz 0.55 -0.125 0.5125))
+      (at (xyz -0.3 -0.05 0.2125))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
+    (model Resistors_SMD.3dshapes/R_0603.wrl
+      (at (xyz 0.55 -0.125 0.2125))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
     (model Capacitors_SMD.3dshapes/C_0603.wrl
-      (at (xyz -0.3 0.05 0.5125))
+      (at (xyz -0.3 0.05 0.2125))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
     (model Capacitors_Tantalum_SMD.3dshapes/TantalC_SizeS_EIA-3216.wrl
-      (at (xyz -0.35 0.15 0.5125))
+      (at (xyz -0.35 0.15 0.2125))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
     (model Capacitors_Tantalum_SMD.3dshapes/TantalC_SizeS_EIA-3216.wrl
-      (at (xyz -0.35 -0.15 0.5125))
+      (at (xyz -0.35 -0.15 0.2125))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
     (model TO_SOT_Packages_SMD.3dshapes/SOT-23-5.wrl
-      (at (xyz -0.4 0 0.5125))
+      (at (xyz -0.4 0 0.2125))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 90))
     )
     (model Capacitors_SMD.3dshapes/C_1210.wrl
-      (at (xyz -0.5 0 0.5125))
+      (at (xyz -0.5 0 0.2125))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 90))
     )
@@ -785,28 +740,23 @@
       (net 2 GND))
     (pad 2 thru_hole oval (at -1.524 4.064 180) (size 1.7272 1.7272) (drill 1.016) (layers *.Cu *.Mask F.SilkS)
       (net 1 /3.3V))
-    (model Socket_Strips.3dshapes/Socket_Strip_Straight_2x04.wrl
-      (at (xyz -0.21 -0.11 0))
+    (model Pin_Headers.3dshapes/Pin_Header_Straight_2x04_Pitch2.54mm.wrl
+      (at (xyz -0.06 -0.16 0.142))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
-    )
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_2x04.wrl
-      (at (xyz -0.21 -0.11 0.442))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 180 0))
+      (rotate (xyz 0 180 90))
     )
     (model ${MYSLOCAL}/mysensors.3dshapes/mysensors_radios.3dshapes/nrf24l01.wrl
-      (at (xyz -0.3 -0.5669999999999999 0.475))
+      (at (xyz -0.3 -0.5669999999999999 0.175))
       (scale (xyz 0.395 0.395 0.395))
       (rotate (xyz 0 0 0))
     )
     (model Housings_DFN_QFN.3dshapes/QFN-20-1EP_4x4mm_Pitch0.5mm.wrl
-      (at (xyz -0.22 -0.51 0.509))
+      (at (xyz -0.22 -0.51 0.209))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
     (model ${MYSLOCAL}/mysensors.3dshapes/w.lain.3dshapes/crystal/crystal_hc-49s.wrl
-      (at (xyz -0.5 -0.475 0.51))
+      (at (xyz -0.5 -0.475 0.21))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 90))
     )
@@ -1242,13 +1192,13 @@
   )
 
   (module mysensors_connectors:TerminalBlock2.54mmx2-kcswalter (layer F.Cu) (tedit 5585791A) (tstamp 5ADF4453)
-    (at 165.1 69.85 270)
+    (at 165.1 69.85 90)
     (descr "2-way 2.54mm pitch terminal block, Phoenix MPT series")
     (path /5ADF2F5C)
-    (fp_text reference J4 (at 0 -4.50088 270) (layer F.SilkS) hide
+    (fp_text reference J4 (at 0 -4.50088 90) (layer F.SilkS) hide
       (effects (font (thickness 0.3048)))
     )
-    (fp_text value Screw_Terminal_01x02 (at 0 4.50088 270) (layer F.SilkS) hide
+    (fp_text value Screw_Terminal_01x02 (at 0 4.50088 90) (layer F.SilkS) hide
       (effects (font (thickness 0.3048)))
     )
     (fp_line (start 2.79908 2.60096) (end -2.79908 2.60096) (layer F.SilkS) (width 0.254))
@@ -1260,9 +1210,9 @@
     (fp_line (start 2.79908 3.0988) (end 2.79908 -3.0988) (layer F.SilkS) (width 0.254))
     (fp_line (start 2.79908 -3.0988) (end -2.79908 -3.0988) (layer F.SilkS) (width 0.254))
     (fp_line (start -2.79908 -3.0988) (end -2.79908 3.0988) (layer F.SilkS) (width 0.254))
-    (pad 2 thru_hole oval (at -1.27 0 270) (size 1.99898 1.99898) (drill 1.09728) (layers *.Cu *.Mask F.SilkS)
+    (pad 2 thru_hole oval (at -1.27 0 90) (size 1.99898 1.99898) (drill 1.09728) (layers *.Cu *.Mask F.SilkS)
       (net 2 GND))
-    (pad 1 thru_hole rect (at 1.27 0 270) (size 1.99898 1.99898) (drill 1.09728) (layers *.Cu *.Mask F.SilkS)
+    (pad 1 thru_hole rect (at 1.27 0 90) (size 1.99898 1.99898) (drill 1.09728) (layers *.Cu *.Mask F.SilkS)
       (net 25 "Net-(C5-Pad2)"))
     (model ${MYSLOCAL}/mysensors.3dshapes/w.lain.3dshapes/conn_mpt/mpt_0,5-2-2,54.wrl
       (at (xyz 0 0 0))
@@ -1565,6 +1515,7 @@
   (segment (start 144.145 73.025) (end 143.1982 73.025) (width 0.25) (layer F.Cu) (net 2))
   (segment (start 143.0757 73.1475) (end 143.1982 73.025) (width 0.25) (layer F.Cu) (net 2))
   (segment (start 141.7712 73.1475) (end 143.0757 73.1475) (width 0.25) (layer F.Cu) (net 2))
+  (segment (start 165.1 71.12) (end 161.25 71.12) (width 1) (layer B.Cu) (net 2))
   (segment (start 121.92 91.6347) (end 121.92 86.36) (width 0.25) (layer B.Cu) (net 3))
   (segment (start 123.19 92.9047) (end 121.92 91.6347) (width 0.25) (layer B.Cu) (net 3))
   (segment (start 123.19 93.98) (end 123.19 92.9047) (width 0.25) (layer B.Cu) (net 3))
@@ -1707,7 +1658,6 @@
   (segment (start 139.5753 67.31) (end 139.5753 66.9192) (width 0.25) (layer F.Cu) (net 24))
   (segment (start 138.95 67.31) (end 139.5753 67.31) (width 0.25) (layer F.Cu) (net 24))
   (segment (start 161.25 71.12) (end 157.44 67.31) (width 1) (layer B.Cu) (net 25))
-  (segment (start 165.1 71.12) (end 161.25 71.12) (width 1) (layer B.Cu) (net 25))
   (segment (start 135.9953 65.84) (end 136.69 66.5347) (width 0.25) (layer F.Cu) (net 26))
   (segment (start 135.9953 64.77) (end 135.9953 65.84) (width 0.25) (layer F.Cu) (net 26))
   (segment (start 135.37 64.77) (end 135.9953 64.77) (width 0.25) (layer F.Cu) (net 26))
