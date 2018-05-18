@@ -1,4 +1,4 @@
-//#define MY_DEBUG
+#define MY_DEBUG
 
 #include <SPI.h>
 #include "nRF24L01.h"
@@ -38,8 +38,8 @@
  * The transmitter can send to a single receiver by using its unique address, 
  * or to all of the receivers in the group by using the shared address. 
  * ("Multicast" may be a somewhat better description in that it goes to multiple 
- * receivers in this scenario, but it need not go to all receivers you can control 
- * the subset of receivers using a given shared address).
+ * receivers in this scenario, but it need not go to all receivers: 
+ * you can control the subset of receivers using a given shared address).
  * 
  * If you are sending a multicast message, it must not use ACK 
  * because multiple receivers would try to send their ACK packets 
@@ -49,9 +49,8 @@
  * is that the receiver sends the ACK packet to its own address, 
  * and the transmitter must be configured to receive at the address 
  * it's sending to. 
- * Thus in multicast, a given receiver's address 
- * to which it will send an ACK is also the shared receive address for 
- * the other receivers). 
+ * Thus in multicast, a given receiver's address to which it will send 
+ * an ACK is also the shared receive address for  * the other receivers). 
  * So ACK must be off for multicast (as your code says).
  */
 
@@ -72,9 +71,14 @@ enum commands {
 };
 
 
+//////////////////////
 // Function prototypes
+//////////////////////
+
 void check_radio(void);
 void error(int errNum);
+void configureRadio();
+
 
 //////////////////////////////////////////
 // Hardware pin (Arduino) configuration //
@@ -92,7 +96,7 @@ RF24 radio(9, 10); // Set up nRF24L01 radio on Arduino SPI bus plus
                    // 12 (MISO)          7 (MISO)
                    // 13 (SCK)           5 (SCK)
 
- const byte rf24_interruptPin = 2;// IRQ #0 on Arduino Nano
+const byte rf24_interruptPin = 2;// IRQ #0 on Arduino Nano
 
 // Push Buttons (All placed in Atmega328p Port D)
 const byte stopButtonPin    = 3;
@@ -119,6 +123,7 @@ unsigned long clickDur         = 200UL;
 
 byte buttonStatus = 0;
 byte buttonMask   = B11111000;
+int nRetry = 1;
 
 static uint32_t message_count = 0;
 
@@ -140,17 +145,65 @@ setup() {
     printf_begin();
 #endif
 
-    // All the pins are HIGH if no push button has been pressed
-    pinMode(stopButtonPin,   INPUT_PULLUP);
-    pinMode(start0ButtonPin, INPUT_PULLUP);
-    pinMode(start1ButtonPin, INPUT_PULLUP);
-    pinMode(start2ButtonPin, INPUT_PULLUP);
-    pinMode(start3ButtonPin, INPUT_PULLUP);
+    // We want all the used pins HIGH if no push button has been pressed
+    // each 0 is input; each 1 is output
+    DDRD = DDRD & (!buttonMask);// Set used pins as Input and leave the others as they are
     
+    // The pull-ups are enabled or disabled writing respectively 1 or 0 to the 
+    // PORTx register when the DDRx register is configured as inputs
+    PORTD |= buttonMask;        // Activate pull-ups in Port D used inputs
+
 #ifdef MY_DEBUG
     Serial.println(F("StopWatchSender"));
 #endif
+    configureRadio();
+}
 
+
+
+/********************** Main Loop *********************/
+void 
+loop() {
+    // Reading Port D at once
+    buttonStatus = ~PIND & buttonMask;
+
+    if(buttonStatus) {
+#ifdef MY_DEBUG
+        transmissionTime = millis();
+#endif
+        for(int i=0; i< nRetry; i++) {
+            radio.startWrite(&buttonStatus, sizeof(buttonStatus), 0);
+        }
+#ifdef MY_DEBUG
+        transmissionTime = millis() - transmissionTime;
+        Serial.print("Sent: ");
+        Serial.print(buttonStatus, BIN);
+        Serial.print(" in ");
+        Serial.println(transmissionTime);
+#endif
+        noTone(clickPin);
+        if(buttonStatus      & 1 << stopButtonPin)
+          tone(clickPin, stopFrq, clickDur);
+        else if(buttonStatus & 1 << start0ButtonPin)
+          tone(clickPin, start0Frq, clickDur);
+        else if(buttonStatus & 1 << start1ButtonPin)
+          tone(clickPin, start1Frq, clickDur);
+        else if(buttonStatus & 1 << start2ButtonPin)
+          tone(clickPin, start2Frq, clickDur);
+        else if(buttonStatus & 1 << start3ButtonPin)
+          tone(clickPin, start3Frq, clickDur);
+        delay(clickDur);
+        while(buttonStatus) {
+          buttonStatus = ~PIND & buttonMask;
+        }
+        noTone(clickPin);
+    }
+
+}
+
+
+void
+configureRadio() {
     // Setup and configure rf radio
     radio.begin();  
 
@@ -170,39 +223,8 @@ setup() {
      
     // Attach interrupt handler to interrupt #2 
     // (using pin D2) on BOTH the sender and receiver
-    attachInterrupt(digitalPinToInterrupt(rf24_interruptPin), check_radio, LOW);             
-}
-
-
-
-/********************** Main Loop *********************/
-void 
-loop() {
-    // Reading Port D at once
-    buttonStatus = !PIND & buttonMask;
-    if(buttonStatus) {
-#ifdef MY_DEBUG
-        transmissionTime = millis();
-#endif
-        radio.startWrite(&buttonStatus, sizeof(buttonStatus), 0);
-        noTone(clickPin);
-        if(buttonStatus      & 1 << stopButtonPin)
-          tone(clickPin, stopFrq, clickDur);
-        else if(buttonStatus & 1 << start0ButtonPin)
-          tone(clickPin, start0Frq, clickDur);
-        else if(buttonStatus & 1 << start1ButtonPin)
-          tone(clickPin, start1Frq, clickDur);
-        else if(buttonStatus & 1 << start2ButtonPin)
-          tone(clickPin, start2Frq, clickDur);
-        else if(buttonStatus & 1 << start3ButtonPin)
-          tone(clickPin, start3Frq, clickDur);
-        delay(50);
-        while(buttonStatus) {
-          buttonStatus = !PIND & buttonMask;
-        }
-        delay(50);
-    }
-}
+    attachInterrupt(digitalPinToInterrupt(rf24_interruptPin), check_radio, LOW);
+}         
 
 
 /******* Interrupt Service Routine *********************/
@@ -245,5 +267,6 @@ error(int errNum) {
     tone(clickPin, errFrqOff, clickDur);
     delay(clickDur);
   }
+  noTone(clickPin);
 }
 
