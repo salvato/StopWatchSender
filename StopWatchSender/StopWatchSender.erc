@@ -1,7 +1,0 @@
-Rapporto ERC (Fri 20 Apr 2018 12:00:54 CEST, Codifica UTF8 )
-
-***** Foglio /
-ErrType(3): Piedino connesso a qualche altro piedino ma nessun piedino lo controlla
-    @ (184.15 mm,54.61 mm): Componente 1, Piedino Passivo (C1) non connesso (collegamento 23).
-
- ** messaggi ERC: 1  Errori 0  Avvertimenti 1
