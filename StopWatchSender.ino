@@ -121,18 +121,18 @@ const byte start1ButtonPin  = 5;
 const byte start2ButtonPin  = 6;
 const byte start3ButtonPin  = 7;
 
-// Click on Push
-const byte    clickPin         = A0;
+// Acoustic click on Push
+const byte    clickPin      = A0;
 
-unsigned      stopFrq          = 800;
-unsigned      start0Frq        = 1000;
-unsigned      start1Frq        = 1200;
-unsigned      start2Frq        = 1400;
-unsigned      start3Frq        = 1600;
-unsigned      errFrqOn         = 600;
-unsigned      errFrqOff        = 1800;
+unsigned      stopFrq       = 800;
+unsigned      start0Frq     = 1000;
+unsigned      start1Frq     = 1200;
+unsigned      start2Frq     = 1400;
+unsigned      start3Frq     = 1600;
+unsigned      errFrqOn      = 600;
+unsigned      errFrqOff     = 1800;
 
-unsigned long clickDur         = 200UL;
+unsigned long clickDur      = 200UL;
 
 ///////////////////////////////////////////////////////////////////////////
 // Arduino Pins 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13 Are already occupied //
