@@ -8,6 +8,21 @@
   #include "printf.h"
 #endif
 
+// nRF24L01+
+// 11.3mA TX at 0dBm output power
+// 13.5mA RX at 2Mbps air data rate
+//
+// On chip voltage regulator
+// 1.9 to 3.6V supply range
+//
+// 5V tolerant inputs
+// Supply voltage if input signals >3.6V
+// 2.7V < VDD < 3.3V
+//
+// -82dBm sensitivity at 2Mbps
+// -85dBm sensitivity at 1Mbps
+// -94dBm sensitivity at 250kbps
+
 // Pinout  nRF24L01:
 // 1  GND
 // 2  3V3
@@ -24,14 +39,14 @@
 // 10 CSN
 // 11 MOSI
 // 12 MISO
-// 13 SCK
+// 13 SCK 
 
 /*
  * You can have multiple units receive the same broadcast (or multicast) message, 
  * if they are each configured to use the same receive address that the 
  * transmitters is sending to.
  * 
- * Remember that each can have up to 6 configured receive addresses, 
+ * Remember that each receiver can have up to 6 configured receive addresses, 
  * so one of the ways to use the device is to configure one receive address 
  * which is unique to a given device, and one receive address which is shared 
  * with other devices (eg: all receivers, so some subset of them). 
@@ -84,11 +99,12 @@ void configureRadio();
 // Hardware pin (Arduino) configuration //
 //////////////////////////////////////////
 
-// Radio nRF24
 RF24 radio(9, 10); // Set up nRF24L01 radio on Arduino SPI bus plus
                    //
                    // Arduino pin    nRF24l01+ pin
                    //------------------------------
+                   //                    1 (GND)
+                   //                    2 (3V3)
                    //  2 (IRQ2)          8 (IRQ)
                    //  9 (CE)            3 (CE)
                    // 10 (CSN)           4 (CSN)
@@ -107,6 +123,7 @@ const byte start3ButtonPin  = 7;
 
 // Click on Push
 const byte    clickPin         = A0;
+
 unsigned      stopFrq          = 800;
 unsigned      start0Frq        = 1000;
 unsigned      start1Frq        = 1200;
@@ -123,12 +140,12 @@ unsigned long clickDur         = 200UL;
 
 byte buttonStatus = 0;
 byte buttonMask   = B11111000;
-int nRetry = 1;
 
 static uint32_t message_count = 0;
 
-byte address[][5] = { 0x01,0x23,0x45,0x67,0x89 , 
-                      0x01,0x23,0x45,0x67,0x89
+byte address[][5] = { 
+                        0x01,0x23,0x45,0x67,0x89, 
+                        0x89,0x67,0x45,0x23,0x01
                     };
 
 #ifdef MY_DEBUG
@@ -136,26 +153,21 @@ unsigned long transmissionTime;
 unsigned long receiveTime;
 #endif
 
+
 /********************** Setup *********************/
 void 
 setup() {
-  
-#ifdef MY_DEBUG
-    Serial.begin(115200);
-    printf_begin();
-#endif
-
-    // We want all the used pins HIGH if no push button has been pressed
-    // each 0 is input; each 1 is output
+    #ifdef MY_DEBUG
+        Serial.begin(115200);
+        printf_begin();
+        Serial.println(F("StopWatch Sender"));
+    #endif
+    // We want all the used pins HIGH if no push button have been pressed
+    // in the mask each 0 is input, each 1 is output
     DDRD = DDRD & (!buttonMask);// Set used pins as Input and leave the others as they are
-    
     // The pull-ups are enabled or disabled writing respectively 1 or 0 to the 
     // PORTx register when the DDRx register is configured as inputs
     PORTD |= buttonMask;        // Activate pull-ups in Port D used inputs
-
-#ifdef MY_DEBUG
-    Serial.println(F("StopWatchSender"));
-#endif
     configureRadio();
 }
 
@@ -168,33 +180,32 @@ loop() {
     buttonStatus = ~PIND & buttonMask;
 
     if(buttonStatus) {
-#ifdef MY_DEBUG
-        transmissionTime = millis();
-#endif
-        for(int i=0; i< nRetry; i++) {
-            radio.startWrite(&buttonStatus, sizeof(buttonStatus), 0);
-        }
-#ifdef MY_DEBUG
-        transmissionTime = millis() - transmissionTime;
-        Serial.print("Sent: ");
-        Serial.print(buttonStatus, BIN);
-        Serial.print(" in ");
-        Serial.println(transmissionTime);
-#endif
+        #ifdef MY_DEBUG
+            transmissionTime = millis();
+        #endif
+        // Non-blocking write to the open writing pipe
+        radio.startWrite(&buttonStatus, sizeof(buttonStatus), 0);
+        #ifdef MY_DEBUG
+            transmissionTime = millis() - transmissionTime;
+            Serial.print("Sent: ");
+            Serial.print(buttonStatus, BIN);
+            Serial.print(" in ");
+            Serial.println(transmissionTime);
+        #endif
         noTone(clickPin);
         if(buttonStatus      & 1 << stopButtonPin)
-          tone(clickPin, stopFrq, clickDur);
+            tone(clickPin, stopFrq, clickDur);
         else if(buttonStatus & 1 << start0ButtonPin)
-          tone(clickPin, start0Frq, clickDur);
+            tone(clickPin, start0Frq, clickDur);
         else if(buttonStatus & 1 << start1ButtonPin)
-          tone(clickPin, start1Frq, clickDur);
+            tone(clickPin, start1Frq, clickDur);
         else if(buttonStatus & 1 << start2ButtonPin)
-          tone(clickPin, start2Frq, clickDur);
+           tone(clickPin, start2Frq, clickDur);
         else if(buttonStatus & 1 << start3ButtonPin)
-          tone(clickPin, start3Frq, clickDur);
+            tone(clickPin, start3Frq, clickDur);
         delay(clickDur);
         while(buttonStatus) {
-          buttonStatus = ~PIND & buttonMask;
+            buttonStatus = ~PIND & buttonMask;
         }
         noTone(clickPin);
     }
@@ -204,25 +215,33 @@ loop() {
 
 void
 configureRadio() {
-    // Setup and configure rf radio
-    radio.begin();  
-
+    // Setup and configure rf radio:
+    //    RF24_PA_MAX
+    //    RF24_1MBPS
+    //    RF24_CRC_16
+    //    Channel = 76
+    radio.begin();
+    if(!radio.setDataRate(RF24_250KBPS))
+        error(4);
+    // RF24_PA_MIN=-18dBm, RF24_PA_LOW=-12dBm, RF24_PA_HIGH=-6dBM, and RF24_PA_MAX=0dBm.
     radio.setPALevel(RF24_PA_MAX);
-    radio.setDataRate(RF24_250KBPS);
-
-    radio.enableDynamicPayloads();// Enable dynamically-sized payloads
-    radio.setAutoAck(false);      // Disable Auto Ack   
-
-#ifdef MY_DEBUG
-    radio.printDetails();         // Dump the configuration of the rf unit for debugging
-#endif
-    
+    // RF24_250KBPS for 250kbs, RF24_1MBPS for 1Mbps, or RF24_2MBPS for 2Mbps
+    // 0 <= Channel <= 127
+    radio.setChannel(76);
+    // Disable Auto Ack
+    radio.setAutoAck(false);      
+    // If setPayloadSize() is notr called, the driver will always transmit 
+    // the maximum payload size (32 bytes), no matter how much was sent
+    radio.setPayloadSize(sizeof(buttonStatus));
+    // RF24_CRC_DISABLED, RF24_CRC_8, RF24_CRC_16
+    radio.setCRCLength(RF24_CRC_16);
     // Open pipes to other node for communication
     radio.openWritingPipe(address[0]);
     radio.openReadingPipe(1, address[1]);
-     
-    // Attach interrupt handler to interrupt #2 
-    // (using pin D2) on BOTH the sender and receiver
+    #ifdef MY_DEBUG
+        radio.printDetails();         // Dump the configuration of the rf unit for debugging
+    #endif
+    // Attach the interrupt handler to interrupt #2 (using pin D2)
     attachInterrupt(digitalPinToInterrupt(rf24_interruptPin), check_radio, LOW);
 }         
 
@@ -230,43 +249,46 @@ configureRadio() {
 /******* Interrupt Service Routine *********************/
 void 
 check_radio(void) { // Interrupt Service routine
-#ifdef MY_DEBUG
-    receiveTime = millis();
-#endif
+    #ifdef MY_DEBUG
+        receiveTime = millis();
+    #endif
     bool tx, fail, rx;
     radio.whatHappened(tx, fail, rx);// What happened?
     
-#ifdef MY_DEBUG
-    if(tx) { // Have we successfully transmitted?
-        Serial.println(F(" Send OK ")); 
-    }
-#endif    
+    #ifdef MY_DEBUG
+        if(!tx)
+            error(2);
+        else  // Have we successfully transmitted?
+            Serial.println(F(" Send OK ")); 
+    #endif
+        
     if(fail) { // Have we failed to transmit?
-      error(10);
-#ifdef MY_DEBUG
-        Serial.println(F(" Send Failed !"));
-#endif
+        #ifdef MY_DEBUG
+            Serial.println(F(" Send Failed !"));
+        #endif
+        error(3);
     }
     
     if(rx || radio.available()) {// Did we receive a message?
-        radio.read(&message_count,sizeof(message_count));
-#ifdef MY_DEBUG
-        Serial.print(F(" Return Time: "));
-        Serial.println(receiveTime-transmissionTime);
-#endif
+        error(1);
+        radio.read(&message_count, sizeof(message_count));
+        #ifdef MY_DEBUG
+            Serial.print(F(" Return Time: "));
+            Serial.println(receiveTime-transmissionTime);
+        #endif
     }
 }
 
 
 void
 error(int errNum) {
-  noTone(clickPin);
-  for(int i=0; i< errNum; i++) {
-    tone(clickPin, errFrqOn, clickDur);
-    delay(clickDur);
-    tone(clickPin, errFrqOff, clickDur);
-    delay(clickDur);
-  }
-  noTone(clickPin);
+    noTone(clickPin);
+    for(int i=0; i< errNum; i++) {
+        tone(clickPin, errFrqOn, clickDur);
+        delay(clickDur);
+        tone(clickPin, errFrqOff, clickDur);
+        delay(clickDur);
+    }
+    noTone(clickPin);
 }
 
