@@ -35,6 +35,7 @@
 
 
 // Pinout Arduino Nano
+//  2 D2 (IRQ0)
 //  9 CE
 // 10 CSN
 // 11 MOSI
@@ -93,6 +94,7 @@ enum commands {
 void check_radio(void);
 void error(int errNum);
 void configureRadio();
+void flashLed(unsigned long clickDur);
 
 
 //////////////////////////////////////////
@@ -121,15 +123,17 @@ const byte start1ButtonPin  = 5;
 const byte start2ButtonPin  = 6;
 const byte start3ButtonPin  = 7;
 
+const byte onOffLed         = 8;
+
 // Acoustic click on Push
 const byte    clickPin      = A0;
 
-unsigned      stopFrq       = 800;
+unsigned      stopFrq       =  800;
 unsigned      start0Frq     = 1000;
 unsigned      start1Frq     = 1200;
 unsigned      start2Frq     = 1400;
 unsigned      start3Frq     = 1600;
-unsigned      errFrqOn      = 600;
+unsigned      errFrqOn      =  600;
 unsigned      errFrqOff     = 1800;
 
 unsigned long clickDur      = 200UL;
@@ -157,6 +161,8 @@ unsigned long receiveTime;
 /********************** Setup *********************/
 void 
 setup() {
+    pinMode(onOffLed, OUTPUT);  // On-Off Led (Used also for visible feedback on push buttons
+    digitalWrite(onOffLed, HIGH);
     #ifdef MY_DEBUG
         Serial.begin(115200);
         printf_begin();
@@ -203,7 +209,7 @@ loop() {
            tone(clickPin, start2Frq, clickDur);
         else if(buttonStatus & 1 << start3ButtonPin)
             tone(clickPin, start3Frq, clickDur);
-        delay(clickDur);
+        flashLed(clickDur);
         while(buttonStatus) {
             buttonStatus = ~PIND & buttonMask;
         }
@@ -277,6 +283,19 @@ check_radio(void) { // Interrupt Service routine
             Serial.println(receiveTime-transmissionTime);
         #endif
     }
+}
+
+
+void
+flashLed(unsigned long clickDur) {
+  int nFlash = 4;
+  int flashDur = clickDur / (2*nFlash);
+  for(int i=0; i<nFlash; i++) {
+    digitalWrite(onOffLed, LOW);
+    delay(flashDur);
+    digitalWrite(onOffLed, HIGH);
+    delay(flashDur);
+  }
 }
 
 
